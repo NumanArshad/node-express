@@ -1,149 +1,108 @@
-var http = require("http");
-var url = require("url");
-var fs = require("fs");
-var queryString = require("querystring");
+// const http = require("http");
+const chalk = require('chalk');
+require('dotenv').config();
 
-var customModule = require("./customModule");
+const port = process.env.PORT || 4000;
 
-var indexFunc = require("./utility");
-const { timeStamp } = require("console");
-indexFunc()
+const express = require("express")
+const app = express();
+const bodyParser = require("body-parser");
 
-customModule()
 
-fs.readFile("asyncfile.txt", (err, data) => {
-    if (err) throw err;
-    console.log("read aysnc file succes sis", data)
+
+////In older version express.encoded or json is not available so bodyparser use
+// app.use(bodyParser.json()); // for parsing application/json
+// app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+app.use(express.urlencoded({extended: true}))
+app.use(express.json())
+
+////middleware///
+// app.use((req, res, next) => {
+//   console.log("logger middleware")
+//   req.var = "data from first";
+//   next()
+// })
+
+app.use("/user/:id",(req, res, next) => {
+  console.log("user id middleware", req.method)
+  next()
 })
-var data = fs.readFileSync("syncfile.txt", "utf8");
-console.log({ data })
+
+app.get("/user/:id",(req, res, next) => {
+//  res.send(`user is ${req.params.id}`)
+ //skip rest of middleware in this stack
+ if(req.params.id === '0') next("route");
+ else next();
+}, 
+(req,res, next) => {
+  console.log(chalk.whiteBright("regular"))
+})
+
+function logRequestUrl (req, res, next){
+  console.log("log url is", Date.now(), req.originalUrl);
+  next()
+}
+
+function logRequestMethod (req, res, next) {
+  console.log("log url method is", req.method);
+  next()
+}
 
 
+app.get("/user/:id",[logRequestUrl, logRequestMethod] ,(req, res) => {
+  console.log("special is")
+  res.send("special come is")
+})
+////add-product here mean for any method of /add-product
+app.use("/add-product", (req, res) => {
+    res.send(`<form action="/product" method="POST">
+    <input type="text" name="title" />
+    <button type="submit">
+    add product
+    </button
+    </form>`)
+})
+///////for specific method/////
+//app.get("/add-product")
 
-// http.createServer((req, res)=>{
-//     res.writeHead(200, {"Content-type":"text/html"});
-//     var query = url.parse(req.url, true).pathname;
-// console.log({query})
-// //   var filepath = 
-// //     res.write(`params are ${query.name} `)
-// //     res.end('hello end')
-// console.log("server createed success")
-// fs.readFile("wint.html", (err, data)=>{
-//     if(err){
-//         console.log("error is", err)
-//         //throw err
-//         res.writeHead(404, {'Content-type': 'text/html'})
-//         return res.end('404 Not Found')
-//     }
-//     res.writeHead(200, {'Content-type': 'text/html'})
-//     return res.end(data)
+app.post("/product", (req, res) => {
+    console.log("hey",req.body )
+    res.send("in prodicy")
+})
 
-// })
-// }).listen(3000)
-// const server = http.createServer((req, res) => {
-
-//     const parsedUrl = url.parse(req.url, true).query;
-
-//    // console.log({ parsedUrl })
-//   //  console.log("query string is", queryString.parse(parsedUrl))
-
-//     if (req.url === "/") {
-
-//         f
-//         // res.write("<html>");
-//         // res.write("<header><title>Node title html is</title></head>");
-//         // res.write(`<body>
-//         // <form action="/message?name=ali" method="POST">
-//         // <input type="text" name="message" />
-//         // <button type="submit">Send</submit>
-//         // </form></body>`);
-//         // res.write("</html>");
-//       //  res.writeHead(200, { "Content-type": "text/html" })
-
-//         fs.readFile("winter.html", (err, response) => {
-//             if (err) {
-//                 console.log("error is", err)
-//                 //throw err
-
-//                 res.writeHead(404, { 'Content-type': 'text/html' })
-//                 return res.end('404 Not Found')
-//             }
-//             console.log("hey response is", response)
-//             res.writeHead(200, { 'Content-type': 'text/html' })
-
-//             return res.end(response)
-//         })
-
-//         // return res.end();
-//     }
-//     if(req.url === "/message"){
-//         const body = [];
-//         req.on("data", chunk => 
-//         body.push(chunk)
-//         )
-//         req.on("end",()=>{
-//           console.log("end response handler ")
-//           const parsedBody = Buffer.concat(body).toString();
-//           const message = parsedBody.split("=")[1];
-//           fs.writeFileSync("message.txt", message);
-//           res.statusCode=302;
-//           res.statusMessage="location change";
-//           res.setHeader("Location","/");
-//          //  res.end()
-//           return res.end()
-          
-//       })
-
-       
-//     }
- 
-//     res.setHeader("Content-type", "text/html")
-//     res.write("<html>");
-//     res.write("<header><title>My first</title></head>");
-//     res.write(`<body><h1>kfeknrg ${parsedUrl.name}</h1></body>`);
-//     res.write("</html>");
-//     res.end();
+////middleware///
+// app.use((req, res, next) => {
+//     console.log("logger middleware 2")
+//     console.log(chalk.bgGrey(`req from first middleare is ${req.var}`))
+//     ///any type///
+//     res.send("end")
+    ///any type///
 // })
 
+// ///////// type specified////////
+// res.writeHead(200, {
+//     "Content-type": "text/html",
+//     "statusMessage": "w4t",
+//     "Location":"/"
+// })
+// res.write("wmle")
+//     res.end()
 
+// /////////
+// res.setHeader("Content-type", "text/html")
+// res.statusCode= 200
+// res.location = "/"
+// res.write("wmle")
+//     res.end()
+//   })
+// ///////// type specified////////
 
-// server.listen(3000)
+app.listen(port,()=>{
+    console.log(
+        `${chalk.green('✓')} ${chalk.blue(
+          `Listening on port ${port}. Visit http://localhost:${port}/ in your browser.`
+        )}`)    
+})
 
-http.createServer((req, res)=>{
-    const parseUrl = url.parse(req.url, true);
-
-    console.log({parseUrl})
-    if(req.url === "/get"){
-
-        // res.writeHead(302,{"Location": "/get1?name=haider", });
-        // res.writeHead(402, {"Content-type":"text/html"})
-        // let data = {
-        //     name: "numan",
-        //     age:"22"
-        // }
-        // res.write(JSON.stringify(data))
-        res.setHeader("Location","/get1?name=knj")
-        res.statusMessage="Location ..."
-        res.statusCode = 302;
-        return res.end()
-    }
-    if(parseUrl.pathname === "/get1"){
-
-        res.writeHead(404, {"Content-type":"text/html"})
-        console.log("before")
-        try{
-            var data = fs.readFileSync("params.txt","utf8")
-
-        }
-        catch(err){
-            console.error("error in sync read is", err)
-        }
-        console.log("after", data)
-
-        res.write("<html>");
-        res.write("<header><title>My first</title></head>");
-        res.write(`<body><h1>kfeknrg ${data}</h1></body>`);
-        res.write("</html>");    
-        res.end()
-    }
-}).listen(4000)
+// server.listen("2000", ()=>console.log("successuflly connected"))
