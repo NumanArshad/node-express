@@ -16,10 +16,17 @@ let products = [
 
 
 exports.renderProducts = (req, res, next) => {
-    res.render("products", {
-        products: Product.fetchAll(),
-        pageTitle: "show products"
+    Product.fetchAll(products => {
+        console.log("nice product is", products)
+        res.render("products", {
+            products,
+            pageTitle: "show products"
+        })
     })
+    // res.render("products", {
+    //     products: Product.fetchAll(),
+    //     pageTitle: "show products"
+    // })
 }
 exports.getAddProduct = (req, res, next) => {
     res.render("addProduct",
@@ -44,7 +51,7 @@ exports.postAddProduct = (req, res, next) => {
 exports.deleteSingleProduct = (req, res, next) => {
     // products = products.filter(({ title }) => title !== req.params.title)
     // next()
-    const deleteProduct = new Product({title: req.params.title});
+    const deleteProduct = new Product({ title: req.params.title });
     deleteProduct.delete()
     res.redirect("/admin/products")
 }

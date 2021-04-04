@@ -53,7 +53,8 @@ router.post("/new-product", (req, res) => {
 
 })
 
-router.get("/products", renderProducts
+router.get("/products", 
+renderProducts 
     // (req, res) => {
     //     let products = [
     //         {
