@@ -8,6 +8,15 @@ const express = require("express")
 const app = express();
 const bodyParser = require("body-parser");
 
+const path = require("path");
+
+///server statically mean to access file directly from browser by file path rather than
+//by defining their path
+//for this purpose we use
+///here we want public to server statically mean accessible without public folder file path
+
+app.use(express.static(path.join(__dirname, "public")))
+
 
 
 ////In older version express.encoded or json is not available so bodyparser use
@@ -17,13 +26,14 @@ const bodyParser = require("body-parser");
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 
+const adminRoute = require("./routes/admin")
 ////middleware///
 // app.use((req, res, next) => {
 //   console.log("logger middleware")
 //   req.var = "data from first";
 //   next()
 // })
-
+app.use("/admin",adminRoute)
 app.use("/user/:id",(req, res, next) => {
   console.log("user id middleware", req.method)
   next()
@@ -33,6 +43,8 @@ app.get("/user/:id",(req, res, next) => {
 //  res.send(`user is ${req.params.id}`)
  //skip rest of middleware in this stack
  if(req.params.id === '0') next("route");
+
+ 
  else next();
 }, 
 (req,res, next) => {
@@ -68,8 +80,24 @@ app.use("/add-product", (req, res) => {
 
 app.post("/product", (req, res) => {
     console.log("hey",req.body )
-    res.send("in prodicy")
+   // res.send("in prodicy")
+   res.redirect("/admin")
 })
+
+///if path not found form above, then no response will send and below will execute
+//if any above match res send and below will never execute as res has send
+
+app.use((req, res)=>{
+  console.log("top is")
+  // res.status(404).send("<h1>Not Found</h1>")
+  res.status(404).sendFile(path.join(__dirname,"views/404.html"))
+
+})
+////Not found path////
+
+
+
+////not found path////
 
 ////middleware///
 // app.use((req, res, next) => {
