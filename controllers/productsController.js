@@ -1,3 +1,5 @@
+const Product = require("../models/product")
+
 let products = [
     {
         title: "first book",
@@ -15,7 +17,7 @@ let products = [
 
 exports.renderProducts = (req, res, next) => {
     res.render("products", {
-        products,
+        products: Product.fetchAll(),
         pageTitle: "show products"
     })
 }
@@ -26,9 +28,11 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
     // res.render("addProduct", {pageTitle: "new product"})
-    products.push(req.body)
-    console.log("reque st body is",
-        req.body)
+    const newProduct = new Product(req.body);
+    newProduct.save();
+    // products.push(req.body)
+    // console.log("reque st body is",
+    //     req.body)
     // res.send("post add proiduct")
     // res.render("products", {
     //     products,
@@ -38,8 +42,10 @@ exports.postAddProduct = (req, res, next) => {
 }
 
 exports.deleteSingleProduct = (req, res, next) => {
-    products = products.filter(({ title }) => title !== req.params.title)
+    // products = products.filter(({ title }) => title !== req.params.title)
     // next()
+    const deleteProduct = new Product({title: req.params.title});
+    deleteProduct.delete()
     res.redirect("/admin/products")
 }
 
