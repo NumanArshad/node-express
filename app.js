@@ -17,8 +17,8 @@ const path = require("path");
 
 app.use(express.static(path.join(__dirname, "public")))
 
-
-
+app.set("view engine","ejs")
+app.set("views","./views") //default render view route ("./views or views")
 ////In older version express.encoded or json is not available so bodyparser use
 // app.use(bodyParser.json()); // for parsing application/json
 // app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -88,10 +88,10 @@ app.post("/product", (req, res) => {
 //if any above match res send and below will never execute as res has send
 
 app.use((req, res)=>{
-  console.log("top is")
+  // console.log("top is")
   // res.status(404).send("<h1>Not Found</h1>")
-  res.status(404).sendFile(path.join(__dirname,"views/404.html"))
-
+  // res.status(404).sendFile(path.join(__dirname,"views/404.html"))
+res.render("404",{pageTitle: "not found page"})
 })
 ////Not found path////
 
