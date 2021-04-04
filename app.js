@@ -26,7 +26,8 @@ app.set("views","./views") //default render view route ("./views or views")
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 
-const adminRoute = require("./routes/admin")
+const adminRoute = require("./routes/admin");
+const noFoundController = require('./controllers/noFoundController');
 ////middleware///
 // app.use((req, res, next) => {
 //   console.log("logger middleware")
@@ -91,8 +92,9 @@ app.use((req, res)=>{
   // console.log("top is")
   // res.status(404).send("<h1>Not Found</h1>")
   // res.status(404).sendFile(path.join(__dirname,"views/404.html"))
-res.render("404",{pageTitle: "not found page"})
+ res.render("404",{pageTitle: "not found page"})
 })
+// app.use(noFoundController.noFound)
 ////Not found path////
 
 
