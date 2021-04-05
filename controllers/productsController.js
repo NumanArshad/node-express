@@ -19,7 +19,7 @@ exports.renderProducts = (req, res, next) => {
     Product.fetchAll(products => {
         console.log("nice product is", products)
         res.render("products", {
-            products,
+            products: products,
             pageTitle: "show products"
         })
     })
@@ -36,7 +36,7 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
     // res.render("addProduct", {pageTitle: "new product"})
     const newProduct = new Product(req.body);
-    newProduct.save();
+    newProduct.save(next);
     // products.push(req.body)
     // console.log("reque st body is",
     //     req.body)
@@ -45,7 +45,6 @@ exports.postAddProduct = (req, res, next) => {
     //     products,
     //     pageTitle: "All Products"
     // })
-    next()
 }
 
 exports.deleteSingleProduct = (req, res, next) => {

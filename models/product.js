@@ -11,7 +11,7 @@ module.exports = class Product {
         this.title = title;
         this.publisher =  publisher;
     }
-    save(){
+    save(cb){
         // const products = [];
         let product = [];
         const targetPath = path.join(rootPath,"data","products.json");
@@ -20,14 +20,16 @@ module.exports = class Product {
             if(!error){
                 product = JSON.parse(data);
             }
+
             // console.log("this is", this, product)
             product.push(this);
             // console.log("appended is", product)
              fs.writeFile(targetPath, JSON.stringify(product),
              (err) => {
-                 console.log("data is", err)
-
+                //  console.log("data is", err)
+            
              });
+             cb()
         })
       
         // products.push(this)
@@ -44,7 +46,7 @@ module.exports = class Product {
                cb([])
                return;
            }
-            console.log("content is", JSON.parse(content))
+            // console.log("content is", JSON.parse(content))
            cb(JSON.parse(content))
        })
         //  return products;
