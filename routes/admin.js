@@ -6,11 +6,11 @@ const fs = require("fs");
 const {
     renderProducts,
     getAddProduct,
+    getEditProduct,
     postAddProduct,
+    postEditProduct,
     deleteSingleProduct 
-} = require("../controllers/productsController");
-
-// console.log({rootDir})
+} = require("../controllers/adminController");
 
 router.get("/", (req, res) => {
     //__DIRNAME is absolute path of current file
@@ -30,27 +30,19 @@ router.get("/", (req, res) => {
     // })
 
     res.sendFile(path.join(rootDir, "public/css/data.txt"))
-
-}
-
-
-    // //res.render("hello from admin"))
-)
+})
 
 router.get("/new-product", (req, res) => {
     //__DIRNAME is absolute path of current file
     // res.sendFile(path.join(__dirname,"../","views","shop.html"))    
     res.sendFile(path.join(__dirname, "../views/newProduct.html"))
-
 })
 
 router.post("/new-product", (req, res) => {
     //__DIRNAME is absolute path of current file
     // res.sendFile(path.join(__dirname,"../","views","shop.html"))    
     console.log("requets body si", req.body.product_name)
-
     res.sendFile(path.join(__dirname, "../views/shop.html"))
-
 })
 
 router.get("/products", 
@@ -81,9 +73,11 @@ renderProducts
 )
 
 router.get("/add-product", getAddProduct)
-router.post("/add-product", postAddProduct, renderProducts)
+router.get("/edit-product/:id", getEditProduct)
+router.post("/add-product", postAddProduct)
+router.post("/edit-product/:id", postEditProduct)
 
-router.post("/delete-product/:title", deleteSingleProduct, renderProducts)
+router.post("/delete-product/:id", deleteSingleProduct, renderProducts)
 
 
 module.exports = router;

@@ -36,7 +36,7 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
     // res.render("addProduct", {pageTitle: "new product"})
     const newProduct = new Product(req.body);
-    newProduct.save(next);
+    newProduct.save();
     // products.push(req.body)
     // console.log("reque st body is",
     //     req.body)
@@ -45,6 +45,7 @@ exports.postAddProduct = (req, res, next) => {
     //     products,
     //     pageTitle: "All Products"
     // })
+    res.redirect("/admin/products")
 }
 
 exports.deleteSingleProduct = (req, res, next) => {

@@ -27,6 +27,7 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 
 const adminRoute = require("./routes/admin");
+const shopRoutes = require("./routes/shop")
 const noFoundController = require('./controllers/noFoundController');
 ////middleware///
 // app.use((req, res, next) => {
@@ -35,6 +36,7 @@ const noFoundController = require('./controllers/noFoundController');
 //   next()
 // })
 app.use("/admin",adminRoute)
+app.use(shopRoutes);
 app.use("/user/:id",(req, res, next) => {
   console.log("user id middleware", req.method)
   next()
