@@ -9,11 +9,13 @@
     "faker": "^5.5.3",
     "nodemailer": "^6.5.0",
     "pg": "^8.6.0",
-    "querystring": "^0.2.1"
+    "querystring": "^0.2.1",
+    "yargs": "^17.0.1"
   },
   "scripts": {
     "start": "node app.js",
-    "migrate": "node node_modules/db-migrate/bin/db-migrate"
+    "migrate": "node node_modules/db-migrate/bin/db-migrate",
+    "seeding": "node seeds/generateData.js"
   },
   "main": "log.js",
   "devDependencies": {

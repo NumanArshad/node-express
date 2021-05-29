@@ -1,17 +1,5 @@
-INSERT INTO users (username, email, password)
-VALUES ('Simone.Legros46',
-        'Minnie14@yahoo.com',
-        'cWJblu48jJ');
-
-
-INSERT INTO users (username, email, password)
-VALUES ('Sister.Schultz',
-        'Lysanne_Kris@hotmail.com',
-        'eMGJlNwK5A');
-
-
-INSERT INTO users (username, email, password)
-VALUES ('Jackson_Yost',
-        'Gaetano74@gmail.com',
-        'B0AanYidYE');
-
+INSERT into users (username, email, password) VALUES ('Brandyn_Erdman','Filiberto.Sawayn37@hotmail.com','Vg1iRl9OT2');
+INSERT into users (username, email, password) VALUES ('Anjali_Medhurst52','Alayna.Crist@yahoo.com','uK40CTb0x_');
+INSERT into users (username, email, password) VALUES ('Ulices.Kutch76','Niko_Padberg@hotmail.com','kqq5yKZMO_');
+INSERT into users (username, email, password) VALUES ('Javonte.Rau38','Aric65@gmail.com','y34wz9VUtA');
+INSERT into users (username, email, password) VALUES ('Paula.Hoeger5','Maggie_Bernhard@hotmail.com','xLQTMfxaBT');

@@ -3,6 +3,9 @@ const path = require("path");
 const app = express();
 require("dotenv").config();
 app.use(express.urlencoded({ extended: false }));
+// const argv = require("yargs").argv;
+
+// console.log({ argv }, argv.output);
 
 // app.use(express.static(path.join(__dirname, "")))
 
