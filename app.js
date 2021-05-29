@@ -1,140 +1,79 @@
-// const http = require("http");
-const chalk = require('chalk');
-require('dotenv').config();
-
-const port = process.env.PORT || 4000;
-
-const express = require("express")
-const app = express();
-const bodyParser = require("body-parser");
-
+const express = require("express");
 const path = require("path");
+const app = express();
+require("dotenv").config();
+app.use(express.urlencoded({ extended: false }));
 
-///server statically mean to access file directly from browser by file path rather than
-//by defining their path
-//for this purpose we use
-///here we want public to server statically mean accessible without public folder file path
+// app.use(express.static(path.join(__dirname, "")))
 
-app.use(express.static(path.join(__dirname, "public")))
+// app.set("view engine", "ejs");
+// app.set("views", "./pages");
 
-app.set("view engine","ejs")
-app.set("views","./views") //default render view route ("./views or views")
-////In older version express.encoded or json is not available so bodyparser use
-// app.use(bodyParser.json()); // for parsing application/json
-// app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+// const adminProducts = require("./controllers/adminProducts");
+const db = require("./db");
+const usersRoutes = require("./routes/users");
+// app.use("/admin", adminProducts);
+app.use("/users", usersRoutes);
+const middleware1 = (req, res, next) => {
+  console.log("middleware 1");
+  next();
+};
+const middleware2 = (req, res, next) => {
+  console.log("middleware 2");
+  next("route");
+};
+app.get("/add-product", [middleware1, middleware2], (req, res) => {
+  // res.send(`<html><head><title>hello</title></head><body>
+  //      <form  action="/product" method="POST">
+  //      <input type="text" name="email" />
+  //      <button type="submit"> save </button>
+  //      </form>
+  //      </body></html>`);
+  const data = {
+    name: "numan",
+  };
 
-app.use(express.urlencoded({extended: true}))
-app.use(express.json())
+  // res.send(JSON.stringify(data));
+  res.redirect("/");
+});
 
-const adminRoute = require("./routes/admin");
-const shopRoutes = require("./routes/shop")
-const noFoundController = require('./controllers/noFoundController');
-////middleware///
-// app.use((req, res, next) => {
-//   console.log("logger middleware")
-//   req.var = "data from first";
-//   next()
-// })
-app.use("/admin",adminRoute)
-app.use(shopRoutes);
-app.use("/user/:id",(req, res, next) => {
-  console.log("user id middleware", req.method)
-  next()
-})
+// const db = query
 
-app.get("/user/:id",(req, res, next) => {
-//  res.send(`user is ${req.params.id}`)
- //skip rest of middleware in this stack
- if(req.params.id === '0') next("route");
+app.post("/product", (req, res, next) => {
+  console.log("response body is", req.body);
+  res.send("nice pretty!");
+});
 
- 
- else next();
-}, 
-(req,res, next) => {
-  console.log(chalk.whiteBright("regular"))
-})
+app.get("/users", (req, res) => {
+  db.query(
+    "select * from users where id>$1 and id<$2",
+    [2, 6],
+    (err, result) => {
+      if (err) {
+        console.log("erorr si");
+        res.send("error" + err.message);
+        return;
+      }
+      return res.status(200).send({ result: result.rows });
+    }
+  );
+});
 
-function logRequestUrl (req, res, next){
-  console.log("log url is", Date.now(), req.originalUrl);
-  next()
-}
+app.get("/ck", (req, res, next) => {
+  console.log("redirect");
+  res.setHeader("set-cookie", "loginned=true");
+  res.redirect("/");
+});
 
-function logRequestMethod (req, res, next) {
-  console.log("log url method is", req.method);
-  next()
-}
+app.get("/", (req, res, next) => {
+  console.log("response body always", req.get("cookie"));
+  // res.setHeader("set-cookie", "loginned=true");
+  res.send("always");
+});
 
+// app.use((req, res) => {
+//   // res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
+//   res.status(404).sendFile(path.join(__dirname, "pages", "notFound.html"));
+// });
 
-app.get("/user/:id",[logRequestUrl, logRequestMethod] ,(req, res) => {
-  console.log("special is")
-  res.send("special come is")
-})
-////add-product here mean for any method of /add-product
-app.use("/add-product", (req, res) => {
-    res.send(`<form action="/product" method="POST">
-    <input type="text" name="title" />
-    <button type="submit">
-    add product
-    </button
-    </form>`)
-})
-///////for specific method/////
-//app.get("/add-product")
-
-app.post("/product", (req, res) => {
-    console.log("hey",req.body )
-   // res.send("in prodicy")
-   res.redirect("/admin")
-})
-
-///if path not found form above, then no response will send and below will execute
-//if any above match res send and below will never execute as res has send
-
-app.use((req, res)=>{
-  // console.log("top is")
-  // res.status(404).send("<h1>Not Found</h1>")
-  // res.status(404).sendFile(path.join(__dirname,"views/404.html"))
- res.render("404",{pageTitle: "not found page"})
-})
-// app.use(noFoundController.noFound)
-////Not found path////
-
-
-
-////not found path////
-
-////middleware///
-// app.use((req, res, next) => {
-//     console.log("logger middleware 2")
-//     console.log(chalk.bgGrey(`req from first middleare is ${req.var}`))
-//     ///any type///
-//     res.send("end")
-    ///any type///
-// })
-
-// ///////// type specified////////
-// res.writeHead(200, {
-//     "Content-type": "text/html",
-//     "statusMessage": "w4t",
-//     "Location":"/"
-// })
-// res.write("wmle")
-//     res.end()
-
-// /////////
-// res.setHeader("Content-type", "text/html")
-// res.statusCode= 200
-// res.location = "/"
-// res.write("wmle")
-//     res.end()
-//   })
-// ///////// type specified////////
-
-app.listen(port,()=>{
-    console.log(
-        `${chalk.green('✓')} ${chalk.blue(
-          `Listening on port ${port}. Visit http://localhost:${port}/ in your browser.`
-        )}`)    
-})
-
-// server.listen("2000", ()=>console.log("successuflly connected"))
+app.listen(process.env.PORT, () => console.log("running at 4000"));

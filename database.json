@@ -1,0 +1,6 @@
+{
+  "dev": {
+    "host": "localhost"
+  },
+  "sql-file": true
+}
