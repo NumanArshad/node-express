@@ -11,8 +11,6 @@ app.use(express.urlencoded({ extended: false }));
 
 // app.set("view engine", "ejs");
 // app.set("views", "./pages");
-
-// const adminProducts = require("./controllers/adminProducts");
 const db = require("./db");
 const usersRoutes = require("./routes/users");
 // app.use("/admin", adminProducts);
