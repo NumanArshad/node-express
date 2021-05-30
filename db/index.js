@@ -11,8 +11,6 @@ const pool = new pg.Pool(
   { connectionString: process.env.DATABASE_URL }
 );
 
-console.log(process.env.USER);
-
 pool.connect((error, client) => {
   if (error) {
     console.log("db connection failure", error.message);
