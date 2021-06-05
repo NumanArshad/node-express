@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const generateToken = (user) =>
-  jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: 120 });
+  jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "2h" });
 
 const verifyToken = (req, res, next) => {
   const bearer = req.headers["authorization"];

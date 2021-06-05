@@ -1,12 +1,21 @@
 const db = require("../db/index");
+const paginationQuery = require("../utils/pagination");
 
-const getAllUsers = (req, res) => {
-  db.query("select * from users", (error, response) => {
-    console.log("response is", response.rows);
-    res.status(200).json({
-      result: response.rows,
-    });
-  });
+const getAllUsers = (req, res, next) => {
+  const colums = ["id", "email", "username"];
+  db.query(
+    `select * from users ${paginationQuery(req.query, colums)}`,
+    (error, response) => {
+      if (error) {
+        console.log("error is", error.message);
+        next(error.message);
+        return;
+      }
+      res.status(200).json({
+        result: response.rows,
+      });
+    }
+  );
 };
 
 const getUserById = (req, res) => {
@@ -16,6 +25,12 @@ const getUserById = (req, res) => {
     [req.params.id],
     (error, response) => {
       console.log("response is", response);
+      if (!response.rowCount) {
+        res.status(404).json({
+          result: "user not found",
+        });
+        return;
+      }
       res.status(200).json({
         result: response.rows,
       });
