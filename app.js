@@ -15,6 +15,7 @@ app.use(express.json());
 const db = require("./db");
 const { verifyToken } = require("./middleware/jwtUtils");
 const usersRoutes = require("./routes/users");
+const { body, validationResult } = require("express-validator");
 app.use("/auth", require("./routes/auth"));
 
 app.use("/users", verifyToken, usersRoutes);
@@ -31,6 +32,26 @@ app.use("/users", verifyToken, usersRoutes);
 //   //  console.log("error is", err.message, err.stack);
 //   next(err);
 // });
+
+app.post("/verify", [
+  body("email")
+    .notEmpty()
+    .withMessage("email is required")
+    .isEmail()
+    .withMessage("email format invalid"),
+  body("name", "enter name please").not().isEmpty(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    let customError = {};
+    for (let error of errors.array()) {
+      const { param, msg } = error;
+      if (customError[param]) continue;
+      customError[param] = msg;
+    }
+
+    res.json(customError);
+  },
+]);
 
 app.use((err, req, res, next) => {
   // res.status(500);
