@@ -4,6 +4,16 @@ const app = express();
 require("dotenv").config();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+const nodemailer = require("nodemailer");
+
+var transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: "afshanarsha2783@gmail.com",
+    pass: "20192129",
+  },
+});
+
 // const argv = require("yargs").argv;
 
 // console.log({ argv }, argv.output);
@@ -12,10 +22,11 @@ app.use(express.json());
 
 // app.set("view engine", "ejs");
 // app.set("views", "./pages");
-const db = require("./db");
+require("./db");
 const { verifyToken } = require("./middleware/jwtUtils");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
+const sendEmail = require("./utils/emails");
 app.use("/auth", require("./routes/auth"));
 
 app.use("/users", verifyToken, usersRoutes);
@@ -52,6 +63,44 @@ app.post("/verify", [
     res.json(customError);
   },
 ]);
+
+app.get("/send", (req, res, next) => {
+  sendEmail(
+    "signup",
+    { email: "test123@mailinator.com", password: "123" },
+    res,
+    next
+  );
+  // ejs.renderFile(
+  //   __dirname + "/hello.ejs",
+  //   { message: "pretty" },
+  //   (err, data) => {
+  //     if (err) {
+  //       console.log("error in rendeirng", err);
+  //       next(err.message);
+  //       return;
+  //     }
+  //     console.log({ data });
+  //     res.send(data);
+  // }
+
+  //);
+  // const mailOption = {
+  //   from: "afshanarsha2783@gmail.com",
+  //   to: "test123@mailinator.com",
+  //   subject: "text send email from node server",
+  //   text: "nice text",
+  //   html: "<h1>html here</h1>",
+  // };
+  // transporter.sendMail(mailOption, (err, info) => {
+  //   if (err) {
+  //     console.log("send email error si", err);
+  //     return res.status(500).send({ email_error: err.message });
+  //   }
+  //   console.log("succes info uis", info);
+  //   res.status(500).send({ email_success: "good" });
+  // });
+});
 
 app.use((err, req, res, next) => {
   // res.status(500);
