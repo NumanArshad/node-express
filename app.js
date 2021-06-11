@@ -18,12 +18,12 @@ app.set("view engine", "ejs");
 //app.set("views", "./pages");
 //require("./db");
 const { verifyToken } = require("./middleware/jwtUtils");
-const usersRoutes = require("./routes/users");
+//const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
-const sendEmail = require("./utils/emails");
-app.use("/auth", require("./routes/auth"));
+//const sendEmail = require("./utils/emails");
+//app.use("/auth", require("./routes/auth"));
 
-app.use("/users", verifyToken, usersRoutes);
+//app.use("/users", verifyToken, usersRoutes);
 
 app.use("/", require("./routes/fileHandling"));
 
@@ -47,14 +47,14 @@ app.post("/verify", [
   },
 ]);
 
-app.get("/send", (req, res, next) => {
-  sendEmail(
-    "signup",
-    { email: "test123@mailinator.com", password: "123" },
-    res,
-    next
-  );
-});
+// app.get("/send", (req, res, next) => {
+//   sendEmail(
+//     "signup",
+//     { email: "test123@mailinator.com", password: "123" },
+//     res,
+//     next
+//   );
+// });
 
 app.use((err, req, res, next) => {
   // res.status(500);

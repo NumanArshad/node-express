@@ -16,7 +16,6 @@ pool.connect((error, client) => {
     console.log("db connection failure", error.message);
     // throw error;
     process.exit();
-    return;
   }
   console.log("database connection established successfully!");
 });
