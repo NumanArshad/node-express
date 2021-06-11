@@ -1,18 +1,12 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+const multer = require("multer");
 require("dotenv").config();
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-const nodemailer = require("nodemailer");
+//app.use(multer({ dest: "repos" }).single("image"));
 
-var transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: "afshanarsha2783@gmail.com",
-    pass: "20192129",
-  },
-});
+app.use(express.json());
 
 // const argv = require("yargs").argv;
 
@@ -20,8 +14,8 @@ var transporter = nodemailer.createTransport({
 
 // app.use(express.static(path.join(__dirname, "")))
 
-// app.set("view engine", "ejs");
-// app.set("views", "./pages");
+app.set("view engine", "ejs");
+//app.set("views", "./pages");
 require("./db");
 const { verifyToken } = require("./middleware/jwtUtils");
 const usersRoutes = require("./routes/users");
@@ -31,18 +25,7 @@ app.use("/auth", require("./routes/auth"));
 
 app.use("/users", verifyToken, usersRoutes);
 
-// handler for the /user/:id path, which sends a special response
-// app.get("/user/:id", function (req, res, next) {
-//   res.send("special");
-// });
-
-// const db = query
-
-// app.get("/dt", (req, res, next) => {
-//   const err = new Error("custom error");
-//   //  console.log("error is", err.message, err.stack);
-//   next(err);
-// });
+app.use("/", require("./routes/fileHandling"));
 
 app.post("/verify", [
   body("email")
@@ -71,35 +54,6 @@ app.get("/send", (req, res, next) => {
     res,
     next
   );
-  // ejs.renderFile(
-  //   __dirname + "/hello.ejs",
-  //   { message: "pretty" },
-  //   (err, data) => {
-  //     if (err) {
-  //       console.log("error in rendeirng", err);
-  //       next(err.message);
-  //       return;
-  //     }
-  //     console.log({ data });
-  //     res.send(data);
-  // }
-
-  //);
-  // const mailOption = {
-  //   from: "afshanarsha2783@gmail.com",
-  //   to: "test123@mailinator.com",
-  //   subject: "text send email from node server",
-  //   text: "nice text",
-  //   html: "<h1>html here</h1>",
-  // };
-  // transporter.sendMail(mailOption, (err, info) => {
-  //   if (err) {
-  //     console.log("send email error si", err);
-  //     return res.status(500).send({ email_error: err.message });
-  //   }
-  //   console.log("succes info uis", info);
-  //   res.status(500).send({ email_success: "good" });
-  // });
 });
 
 app.use((err, req, res, next) => {
