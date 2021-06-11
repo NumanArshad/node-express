@@ -26,7 +26,6 @@
   },
   "main": "log.js",
   "devDependencies": {
-    "chalk": "^4.1.0",
     "yargs": "^17.0.1"
   }
 }
