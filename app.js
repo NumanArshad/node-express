@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.set("view engine", "ejs");
 //app.set("views", "./pages");
-require("./db");
+//require("./db");
 const { verifyToken } = require("./middleware/jwtUtils");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
