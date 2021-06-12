@@ -3,10 +3,7 @@ const ejs = require("ejs");
 const rootPath = require("../rootPath");
 const path = require("path");
 
-const {
-  SENDER_EMAIL = "afshanarsha2783@gmail.com",
-  SENDER_PASSWORD = 20192129,
-} = process.env;
+const { SENDER_EMAIL, SENDER_PASSWORD } = process.env;
 var transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
