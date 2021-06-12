@@ -30,7 +30,7 @@ transporter.verify((error, success) => {
     // next(error.message);
     return; //next(error.message);
   }
-  console.log("email server is ready", process.env.SENDER_EMAIL);
+  console.log("email server is ready", process.env.SENDER_EMAIL, rootPath);
 });
 
 const parseEmailTemplate = async (templateType, reqBody, next) => {
