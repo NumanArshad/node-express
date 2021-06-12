@@ -16,14 +16,14 @@ app.use(express.json());
 
 app.set("view engine", "ejs");
 //app.set("views", "./pages");
-//require("./db");
+require("./db");
 const { verifyToken } = require("./middleware/jwtUtils");
-//const usersRoutes = require("./routes/users");
+const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
 const sendEmail = require("./utils/emails");
 //app.use("/auth", require("./routes/auth"));
 
-//app.use("/users", verifyToken, usersRoutes);
+app.use("/users", usersRoutes);
 
 app.use("/", require("./routes/fileHandling"));
 
