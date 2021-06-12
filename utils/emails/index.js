@@ -15,6 +15,7 @@ var transporter = nodemailer.createTransport({
   },
 });
 
+console.log({ SENDER_EMAIL });
 const createEmailOption = ({ receipentEmail, subject, body, html }) => ({
   from: SENDER_EMAIL,
   to: receipentEmail,
@@ -27,7 +28,7 @@ transporter.verify((error, success) => {
   if (error) {
     console.error("error in verifying transporter");
     // next(error.message);
-    return;
+    return next(error.message);
   }
   console.log("email server is ready", process.env.SENDER_EMAIL);
 });
