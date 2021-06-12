@@ -30,7 +30,12 @@ transporter.verify((error, success) => {
     // next(error.message);
     return; //next(error.message);
   }
-  console.log("email server is ready", process.env.SENDER_EMAIL, rootPath);
+  console.log(
+    "email server is ready",
+    process.env.SENDER_EMAIL,
+    rootPath,
+    path.join(__dirname, "./templates")
+  );
 });
 
 const parseEmailTemplate = async (templateType, reqBody, next) => {
@@ -48,7 +53,7 @@ const parseEmailTemplate = async (templateType, reqBody, next) => {
 
     if (!template) return next("target template not exist");
 
-    template = path.join(rootPath, "utils", "Emails", "templates", template);
+    template = path.join(__dirname, "./templates", template);
 
     const html = await ejs.renderFile(template, reqBody);
 
