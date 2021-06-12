@@ -62,11 +62,11 @@ app.use((err, req, res, next) => {
   res.status(400).send({ message: err });
 });
 
-// app.get("/", (req, res, next) => {
-//   console.log("response header always", req.headers);
-//   // res.setHeader("set-cookie", "loginned=true");
-//   res.send("always");
-// });
+app.get("/", (req, res, next) => {
+  console.log("response header always", req.headers);
+  // res.setHeader("set-cookie", "loginned=true");
+  res.send("always");
+});
 
 // app.use((req, res) => {
 //   // res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
