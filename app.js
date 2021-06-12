@@ -65,7 +65,7 @@ app.use((err, req, res, next) => {
 app.get("/", (req, res, next) => {
   console.log("response header always", req.headers);
   // res.setHeader("set-cookie", "loginned=true");
-  res.send("always");
+  res.send("shown on github actions");
 });
 
 // app.use((req, res) => {
