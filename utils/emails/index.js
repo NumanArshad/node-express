@@ -28,7 +28,7 @@ transporter.verify((error, success) => {
   if (error) {
     console.error("error in verifying transporter");
     // next(error.message);
-    return next(error.message);
+    return; //next(error.message);
   }
   console.log("email server is ready", process.env.SENDER_EMAIL);
 });
