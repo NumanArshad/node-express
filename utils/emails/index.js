@@ -26,7 +26,7 @@ const createEmailOption = ({ receipentEmail, subject, body, html }) => ({
 
 transporter.verify((error, success) => {
   if (error) {
-    console.error("error in verifying transporter");
+    console.error("error in verifying transporter", error.message);
     // next(error.message);
     return; //next(error.message);
   }
