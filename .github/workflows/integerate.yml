@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - heroku-deployment-setup
+      - develop
 
 jobs:
   heroku-deploy:
