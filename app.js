@@ -21,9 +21,9 @@ const { verifyToken } = require("./middleware/jwtUtils");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
 const sendEmail = require("./utils/emails");
-app.use("/auth", require("./routes/auth"));
+//app.use("/auth", require("./routes/auth"));
 
-app.use("/users", verifyToken, usersRoutes);
+app.use("/users", usersRoutes);
 
 app.use("/", require("./routes/fileHandling"));
 
@@ -62,11 +62,11 @@ app.use((err, req, res, next) => {
   res.status(400).send({ message: err });
 });
 
-// app.get("/", (req, res, next) => {
-//   console.log("response header always", req.headers);
-//   // res.setHeader("set-cookie", "loginned=true");
-//   res.send("always");
-// });
+app.get("/", (req, res, next) => {
+  console.log("response header always", req.headers);
+  // res.setHeader("set-cookie", "loginned=true");
+  res.send("shown on github actions again? and pretty");
+});
 
 // app.use((req, res) => {
 //   // res.status(404).sendFile(path.join(__dirname, "views", "404.html"));

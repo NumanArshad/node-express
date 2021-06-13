@@ -12,6 +12,7 @@ var transporter = nodemailer.createTransport({
   },
 });
 
+console.log({ SENDER_EMAIL });
 const createEmailOption = ({ receipentEmail, subject, body, html }) => ({
   from: SENDER_EMAIL,
   to: receipentEmail,
@@ -22,11 +23,10 @@ const createEmailOption = ({ receipentEmail, subject, body, html }) => ({
 
 transporter.verify((error, success) => {
   if (error) {
-    console.error("error in verifying transporter");
+    console.error("error in verifying transporter", error.message);
     // next(error.message);
-    return;
+    return; //next(error.message);
   }
-  console.log("email server is ready");
 });
 
 const parseEmailTemplate = async (templateType, reqBody, next) => {
@@ -44,7 +44,7 @@ const parseEmailTemplate = async (templateType, reqBody, next) => {
 
     if (!template) return next("target template not exist");
 
-    template = path.join(rootPath, "utils", "Emails", "templates", template);
+    template = path.join(rootPath, "utils", "emails", "templates", template);
 
     const html = await ejs.renderFile(template, reqBody);
 
