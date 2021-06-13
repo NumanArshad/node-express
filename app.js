@@ -21,7 +21,7 @@ const { verifyToken } = require("./middleware/jwtUtils");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
 const sendEmail = require("./utils/emails");
-//app.use("/auth", require("./routes/auth"));
+app.use("/auth", require("./routes/auth"));
 
 app.use("/users", usersRoutes);
 
