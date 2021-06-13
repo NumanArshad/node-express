@@ -57,7 +57,7 @@ app.get("/send", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  // res.status(500);
+  //res.status(500);
   console.error("error middleware", err);
   res.status(400).send({ message: err });
 });
