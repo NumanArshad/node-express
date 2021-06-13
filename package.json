@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "migrate": "node node_modules/db-migrate/bin/db-migrate",
+    "migrate": "node node_modules/db-migrate/bin/db-migrate --config config/database.json",
     "seeding": "node seeds/generateData.js"
   },
   "main": "log.js",
