@@ -47,25 +47,33 @@ app.post("/verify", [
   },
 ]);
 
-app.get("/send", (req, res, next) => {
-  sendEmail(
-    "signup",
-    { email: "test123@mailinator.com", password: "123" },
-    res,
-    next
-  );
+console.log(undefined || "yes");
+
+app.get("/send", async (req, res, next) => {
+  try {
+    const sendInfo = await sendEmail(
+      "signup",
+      { email: "test123@mailinator.com", token: "123", id: 23 },
+      next
+    );
+
+    console.log({ sendInfo });
+    res.send({ send_success: `email send successfully to test123@gmail.com` });
+  } catch (error) {
+    next(error.message);
+  }
+});
+
+app.get("/welcome", (req, res, next) => {
+  console.log("response header always", req.headers);
+  // res.setHeader("set-cookie", "loginned=true");
+  res.send("shown on github actions again? and pretty");
 });
 
 app.use((err, req, res, next) => {
   //res.status(500);
   console.error("error middleware", err);
   res.status(400).send({ message: err });
-});
-
-app.get("/", (req, res, next) => {
-  console.log("response header always", req.headers);
-  // res.setHeader("set-cookie", "loginned=true");
-  res.send("shown on github actions again? and pretty");
 });
 
 // app.use((req, res) => {

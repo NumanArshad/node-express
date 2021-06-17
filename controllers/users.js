@@ -38,11 +38,14 @@ const getUserById = (req, res) => {
   );
 };
 
-const isUserExist = async (email) => {
+const isUserExist = async ({ email, id }) => {
+  let columnName = email ? "email" : "id";
   try {
-    const response = await db.query("select * from users where email = $1", [
-      email,
-    ]);
+    const response = await db.query(
+      `select * from users where ${columnName} = $1`,
+      [email ?? id]
+    );
+    //  console.log(email, id, columnName, { response });
 
     if (response.rowCount) {
       return response.rows[0];

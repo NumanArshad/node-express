@@ -18,6 +18,17 @@ const validateRegisterRequest = [
     .withMessage("email is required")
     .isEmail()
     .withMessage("invalid email format"),
+  // body("password")
+  //   .notEmpty()
+  //   .withMessage("password is required")
+  //   .isLength({ min: 4 })
+  //   .withMessage("password must have length 4"),
+  formatValidationMessages,
+];
+
+const validateActivateAccount = [
+  body("id").notEmpty().withMessage("user id is required"),
+  body("token").notEmpty().withMessage("reset token is required"),
   body("password")
     .notEmpty()
     .withMessage("password is required")
@@ -29,4 +40,5 @@ const validateRegisterRequest = [
 module.exports = {
   validateLoginRequest,
   validateRegisterRequest,
+  validateActivateAccount,
 };
