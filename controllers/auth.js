@@ -141,6 +141,11 @@ const verifyUserSignup = async (req, res, next) => {
           [id]
         );
 
+        await sendEmail(
+          "accountVerification",
+          { email: user.email, password },
+          next
+        );
         res.send({ message: "email account verified successfully" });
       }
     }

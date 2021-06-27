@@ -39,6 +39,9 @@ const parseEmailTemplate = async (templateType, reqBody, next) => {
       template = "signUpTemplate.ejs";
       subject = "User Registeration";
       break;
+    case "accountVerification":
+      template = "activateAccount.ejs";
+      subject = "Account Activation";
     default:
       template;
   }

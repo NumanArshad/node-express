@@ -2,7 +2,12 @@ const db = require("../db/index");
 const paginationQuery = require("../utils/pagination");
 
 const getAllUsers = (req, res, next) => {
-  const colums = ["id", "email", "username"];
+  const colums = [
+    { columnName: "id", type: "other" },
+    { columnName: "email" },
+    { columnName: "username" },
+    { columnName: "active_status", type: "other" },
+  ];
   db.query(
     `select * from users ${paginationQuery(req.query, colums)}`,
     (error, response) => {

@@ -25,6 +25,9 @@ app.use("/auth", require("./routes/auth"));
 
 app.use("/users", usersRoutes);
 
+//const coursesRoute = require("./routes/courses")(app);
+app.use("/courses", require("./routes/courses"));
+app.use("/teacher_courses", require("./routes/teacher_courses"));
 app.use("/", require("./routes/fileHandling"));
 
 app.post("/verify", [
@@ -46,8 +49,6 @@ app.post("/verify", [
     res.json(customError);
   },
 ]);
-
-console.log(undefined || "yes");
 
 app.get("/send", async (req, res, next) => {
   try {
@@ -73,7 +74,8 @@ app.get("/welcome", (req, res, next) => {
 app.use((err, req, res, next) => {
   //res.status(500);
   console.error("error middleware", err);
-  res.status(400).send({ message: err });
+  const statusCode = err.includes("duplicate") ? 422 : 400;
+  res.status(statusCode).send({ message: err });
 });
 
 // app.use((req, res) => {
