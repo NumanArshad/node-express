@@ -26,7 +26,7 @@ const validateRegisterRequest = [
   formatValidationMessages,
 ];
 
-const validateActivateAccount = [
+const validateResetPassword = [
   body("id").notEmpty().withMessage("user id is required"),
   body("token").notEmpty().withMessage("reset token is required"),
   body("password")
@@ -37,8 +37,18 @@ const validateActivateAccount = [
   formatValidationMessages,
 ];
 
+const validateForgotRequest = [
+  body("email")
+    .notEmpty()
+    .withMessage("email is required")
+    .isEmail()
+    .withMessage("invalid email format"),
+  formatValidationMessages,
+];
+
 module.exports = {
   validateLoginRequest,
   validateRegisterRequest,
-  validateActivateAccount,
+  validateResetPassword,
+  validateForgotRequest,
 };

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { getUserByIdorEmail } = require("../controllers/users");
 
 const generateToken = (user) =>
   jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "2h" });
@@ -23,7 +24,28 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+const getValidUser = async (req, res, next) => {
+  const user = await getUserByIdorEmail(req.body);
+  if (!user) {
+    return res.status(404).send({
+      error: {
+        email: "user does not exist",
+      },
+    });
+  }
+
+  if (!user.active_status && req.url !== "/activate-account") {
+    return res.status(403).send({ message: "email is not verified" });
+  } else if (user.active_status && req.url === "/activate-account") {
+    return res.status(422).send({ message: "email is verified already" });
+  } else {
+    req.user = user;
+    next();
+  }
+};
+
 module.exports = {
   generateToken,
   verifyToken,
+  getValidUser,
 };

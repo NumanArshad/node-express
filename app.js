@@ -17,7 +17,7 @@ app.use(express.json());
 app.set("view engine", "ejs");
 //app.set("views", "./pages");
 require("./db");
-const { verifyToken } = require("./middleware/jwtUtils");
+const { verifyToken } = require("./middleware/auth");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
 const sendEmail = require("./utils/emails");
@@ -64,6 +64,19 @@ app.get("/send", async (req, res, next) => {
     next(error.message);
   }
 });
+
+app.post(
+  "/tst",
+  (req, res, next) => {
+    req.token = "token";
+    req.locale = "local here boy";
+
+    next();
+  },
+  (req, res, next) => {
+    res.send({ token: req.token, locale: req.locale });
+  }
+);
 
 app.get("/welcome", (req, res, next) => {
   console.log("response header always", req.headers);

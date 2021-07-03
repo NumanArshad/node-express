@@ -43,7 +43,7 @@ const getUserById = (req, res) => {
   );
 };
 
-const isUserExist = async ({ email, id }) => {
+const getUserByIdorEmail = async ({ email, id }) => {
   let columnName = email ? "email" : "id";
   try {
     const response = await db.query(
@@ -64,5 +64,5 @@ const isUserExist = async ({ email, id }) => {
 module.exports = {
   getAllUsers,
   getUserById,
-  isUserExist,
+  getUserByIdorEmail,
 };
