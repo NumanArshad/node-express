@@ -1,4 +1,6 @@
+const { UNPROCESSIBLE_ENTITY, NOT_FOUND } = require("../config/httpStatusCode");
 const db = require("../db");
+const { CustomPropertyError } = require("../middleware/errorHandler");
 const paginationQuery = require("../utils/pagination");
 
 const assignCourseToTeacher = async (req, res, next) => {
@@ -14,9 +16,9 @@ const assignCourseToTeacher = async (req, res, next) => {
         data: response.rows[0],
       });
     }
-    res.status(422).json({ message: "teacher course created failure" });
+    next("teacher course created failure");
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 
@@ -61,7 +63,7 @@ const getAllTeachersCourses = async (req, res, next) => {
     ).rows;
     res.send({ data });
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 
@@ -72,7 +74,7 @@ const getAllTeachersCourses = async (req, res, next) => {
 //     ]);
 //     res.send({ data });
 //   } catch (error) {
-//     next(error.message);
+//     next(error);
 //   }
 // };
 
@@ -84,7 +86,6 @@ const courseAssignAlready = async (req, res, next) => {
   const isPutMethod = req.method === "PUT";
   let params = [course_id, teacher_id];
   if (isPutMethod) params = [...params, req.params.id];
-  console.log({ params, ...req.body });
   try {
     const response = await db.query(
       `
@@ -95,14 +96,16 @@ const courseAssignAlready = async (req, res, next) => {
       params
     );
     if (response.rowCount) {
-      return res.send({
-        message: `course ${course_id} already assign to ${teacher_id}`,
-      });
+      throw new CustomPropertyError(
+        `course ${course_id} already assign to ${teacher_id}`,
+        "course_id",
+        UNPROCESSIBLE_ENTITY
+      );
     }
     next();
   } catch (error) {
     console.log("error occuerd", error.message);
-    next(error.message);
+    next(error);
   }
 };
 
@@ -115,12 +118,14 @@ const updateTeacherCourse = async (req, res, next) => {
     if (response.rowCount) {
       return res.send({ data: response.rows });
     }
-    res.status(400).send({
-      message: `teacher course not found against id ${req.params.id}`,
-    });
+    throw new CustomPropertyError(
+      `teacher course not found against id ${req.params.id}`,
+      "course_id",
+      NOT_FOUND
+    );
   } catch (error) {
     console.log("update error is", error.status);
-    next(error.message);
+    next(error);
   }
 };
 

@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const httpStatusCode = require("../../config/httpStatusCode");
 
 module.exports = (req, res, next) => {
   const errors = validationResult(req);
@@ -12,5 +13,7 @@ module.exports = (req, res, next) => {
     customError[param] = msg;
   }
 
-  res.status(400).json({ error: customError });
+  console.log({ customError });
+
+  res.status(httpStatusCode.BAD_REQUEST).json({ error: customError });
 };

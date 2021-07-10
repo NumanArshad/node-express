@@ -1,5 +1,5 @@
 const { body } = require("express-validator");
-const formatValidationMessages = require("../formatValidationMessages");
+const formatValidationMessages = require("./formatValidationMessages");
 
 const validateCreateUpdateCourse = [
   body("name")

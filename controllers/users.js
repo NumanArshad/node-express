@@ -13,7 +13,7 @@ const getAllUsers = (req, res, next) => {
     (error, response) => {
       if (error) {
         console.log("error is", error.message);
-        next(error.message);
+        next(error);
         return;
       }
       res.status(200).json({

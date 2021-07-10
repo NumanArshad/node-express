@@ -2,8 +2,9 @@ const nodemailer = require("nodemailer");
 const ejs = require("ejs");
 const rootPath = require("../rootPath");
 const path = require("path");
+const envVariables = require("../../config/envVariables");
+const { SENDER_EMAIL, SENDER_PASSWORD } = envVariables;
 
-const { SENDER_EMAIL, SENDER_PASSWORD } = process.env;
 var transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -24,7 +25,7 @@ const createEmailOption = ({ receipentEmail, subject, body, html }) => ({
 transporter.verify((error, success) => {
   if (error) {
     console.error("error in verifying transporter", error.message);
-    // next(error.message);
+    // next(error);
     return; //next(error.message);
   }
   console.log("email server is ready");
@@ -86,7 +87,7 @@ const sendEmail = async (templateType, reqData, next) => {
   //} catch (error) {
   //   console.log("sending error");
 
-  //   next(error.message);
+  //   next(error);
   //   return;
   // }
 };

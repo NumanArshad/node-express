@@ -1,7 +1,17 @@
 const brcypt = require("bcrypt");
 const crypto = require("crypto");
+const {
+  UNAUTHORIZE,
+  NOT_FOUND,
+  UNPROCESSIBLE_ENTITY,
+  INTERNAL_SERVER_ERROR,
+} = require("../config/httpStatusCode");
 const db = require("../db/index");
 const { generateToken } = require("../middleware/auth");
+const {
+  CustomError,
+  CustomPropertyError,
+} = require("../middleware/errorHandler");
 const sendEmail = require("../utils/emails");
 const { getUserByIdorEmail } = require("./users");
 
@@ -12,22 +22,14 @@ const login = async (req, res, next) => {
     const user = req.user;
 
     const isMatch = await brcypt.compare(password, user.password);
-
-    if (!isMatch) {
-      res.status(401).send({
-        error: {
-          password: "invalid credential",
-        },
-      });
-      return;
-    }
+    if (!isMatch) throw new CustomError("invalid credential", UNAUTHORIZE);
 
     const { password: pswrd, ...restUserInfo } = user;
 
     const token = generateToken(restUserInfo);
     res.send({ token });
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 
@@ -37,12 +39,11 @@ const register = async (req, res, next) => {
   try {
     const user = await getUserByIdorEmail({ email });
     if (user) {
-      res.status(422).send({
-        error: {
-          email: "email exist already",
-        },
-      });
-      return;
+      throw new CustomPropertyError(
+        "email exist already",
+        "email",
+        UNPROCESSIBLE_ENTITY
+      );
     }
 
     await db.query("BEGIN");
@@ -88,7 +89,7 @@ const register = async (req, res, next) => {
   } catch (error) {
     console.error("register error is ", error.message);
     db.query("ROLLBACK");
-    next(error.message);
+    next(error);
   }
 };
 
@@ -129,10 +130,14 @@ const verifyUserSignup = async (req, res, next) => {
       }
     }
     await db.query("ROLLBACK");
-    return res.status(422).send({ message: "email account can not verify" });
+    throw new CustomPropertyError(
+      "email account can not verify",
+      "email",
+      UNPROCESSIBLE_ENTITY
+    );
   } catch (error) {
     db.query("ROLLBACK");
-    next(error.message);
+    next(error);
   }
 };
 
@@ -154,7 +159,7 @@ const requestForgotPassword = async (req, res, next) => {
       res.send({ message: "reset password token send successfully!" });
     }
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 
@@ -184,11 +189,15 @@ const resetForgotPassword = async (req, res, next) => {
         );
         return res.send({ message: "password reset successfully!" });
       }
-      res.send({ message: "password reset failure!" });
+      next("password reset failure!");
     }
-    res.send({ message: "password reset is not requested!" });
+    throw new CustomPropertyError(
+      "password reset is not requested!",
+      "password",
+      UNPROCESSIBLE_ENTITY
+    );
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 

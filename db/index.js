@@ -1,4 +1,5 @@
 const pg = require("pg");
+const envVariables = require("../config/envVariables");
 
 const pool = new pg.Pool(
   //   {
@@ -8,10 +9,10 @@ const pool = new pg.Pool(
   //   password: process.env.PASSWORD,
   //   port: process.env.DB_PORT,
   // }
-  { connectionString: process.env.DATABASE_URL }
+  { connectionString: envVariables.DATABASE_URL }
 );
 
-console.log(process.env.DATABASE_URL);
+//console.log(process.env.DATABASE_URL);
 
 pool.connect((error, client) => {
   if (error) {

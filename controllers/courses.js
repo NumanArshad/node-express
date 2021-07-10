@@ -1,4 +1,9 @@
+const { NOT_FOUND } = require("../config/httpStatusCode");
 const db = require("../db");
+const {
+  CustomError,
+  CustomPropertyError,
+} = require("../middleware/errorHandler");
 
 const createCourse = async (req, res, next) => {
   try {
@@ -13,9 +18,9 @@ const createCourse = async (req, res, next) => {
         data: response.rows[0],
       });
     }
-    res.status(422).json({ message: "course created failure" });
+    next("course created failure");
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 
@@ -24,7 +29,7 @@ const getAllCourses = async (req, res, next) => {
     const data = (await db.query("select * from courses")).rows;
     res.send({ data });
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 
@@ -35,7 +40,7 @@ const getCourseById = async (req, res, next) => {
     ).rows;
     res.send({ data });
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 
@@ -48,12 +53,15 @@ const updateCourse = async (req, res, next) => {
     if (response.rowCount) {
       return res.send({ data: response.rows });
     }
-    res
-      .status(400)
-      .send({ message: `course not found against id ${req.params.id}` });
+
+    throw new CustomPropertyError(
+      `course not found against id ${req.params.id}`,
+      "name",
+      NOT_FOUND
+    );
   } catch (error) {
     console.log("update error is", error.status);
-    next(error.message);
+    next(error);
   }
 };
 

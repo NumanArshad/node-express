@@ -21,6 +21,13 @@ const { verifyToken } = require("./middleware/auth");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
 const sendEmail = require("./utils/emails");
+const { validateLoginRequest } = require("./middleware/validations/auth");
+const {
+  CustomError,
+  isOperationalError,
+} = require("./middleware/errorHandler");
+const httpStatusCode = require("./config/httpStatusCode");
+const envVariables = require("./config/envVariables");
 app.use("/auth", require("./routes/auth"));
 
 app.use("/users", usersRoutes);
@@ -29,7 +36,7 @@ app.use("/users", usersRoutes);
 app.use("/courses", require("./routes/courses"));
 app.use("/teacher_courses", require("./routes/teacher_courses"));
 app.use("/", require("./routes/fileHandling"));
-
+app;
 app.post("/verify", [
   body("email")
     .notEmpty()
@@ -50,45 +57,47 @@ app.post("/verify", [
   },
 ]);
 
-app.get("/send", async (req, res, next) => {
-  try {
-    const sendInfo = await sendEmail(
-      "signup",
-      { email: "test123@mailinator.com", token: "123", id: 23 },
-      next
-    );
-
-    console.log({ sendInfo });
-    res.send({ send_success: `email send successfully to test123@gmail.com` });
-  } catch (error) {
-    next(error.message);
-  }
-});
-
-app.post(
-  "/tst",
-  (req, res, next) => {
-    req.token = "token";
-    req.locale = "local here boy";
-
-    next();
-  },
-  (req, res, next) => {
-    res.send({ token: req.token, locale: req.locale });
-  }
-);
-
 app.get("/welcome", (req, res, next) => {
   console.log("response header always", req.headers);
+
   // res.setHeader("set-cookie", "loginned=true");
   res.send("shown on github actions again? and pretty");
 });
 
+app.post(
+  "/throw",
+  (req, res, next) => {
+    if (req.query.name === "user") throw new CustomError("not found", 404); //new CustomError("test it", 404);
+    if (req.query.name === "ali") return next();
+    res.send({ message: "not throw" });
+  },
+  (req, res) => {
+    res.send({ message: "good" });
+  }
+);
+
+app.use((req, res) => {
+  throw new CustomError("Not Found", httpStatusCode.NOT_FOUND);
+});
+
+// process.on("unhandledRejection", (error) => {
+//   console.log("unhandle rejection", error.name);
+//   throw error;
+// });
+
+process.on("uncaughtException", (error) => {
+  console.error(new Date().toUTCString() + " uncaughtException:", err.message);
+  console.error(err.stack);
+  // if (isOperationalError(error)) {
+  process.exit(1);
+  // }
+});
+
 app.use((err, req, res, next) => {
-  //res.status(500);
-  console.error("error middleware", err);
-  const statusCode = err.includes("duplicate") ? 422 : 400;
-  res.status(statusCode).send({ message: err });
+  console.error("error middleware", err.message);
+  res
+    .status(err.statusCode || httpStatusCode.INTERNAL_SERVER_ERROR)
+    .send({ error: err.message });
 });
 
 // app.use((req, res) => {
@@ -96,4 +105,4 @@ app.use((err, req, res, next) => {
 //   res.status(404).sendFile(path.join(__dirname, "pages", "notFound.html"));
 // });
 
-app.listen(process.env.PORT, () => console.log("running at 4000"));
+app.listen(envVariables.PORT, () => console.log("running at 4000"));
