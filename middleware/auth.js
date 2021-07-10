@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { default: envVariables } = require("../config/envVariables");
+const envVariables = require("../config/envVariables");
 const {
   UNAUTHORIZE,
   UNPROCESSIBLE_ENTITY,
