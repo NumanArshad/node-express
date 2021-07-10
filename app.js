@@ -58,7 +58,7 @@ app.post("/verify", [
 ]);
 
 app.get("/healthCheck", (req, res, next) => {
-  res.send("okay");
+  res.send("ok");
 });
 
 // app.post(
