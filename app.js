@@ -33,7 +33,7 @@ app.use("/auth", require("./routes/auth"));
 app.use("/users", usersRoutes);
 
 //const coursesRoute = require("./routes/courses")(app);
-app.use("/courses", require("./routes/courses"));
+app.use("/courses", require("../routes/courses"));
 app.use("/teacher_courses", require("./routes/teacher_courses"));
 app.use("/", require("./routes/fileHandling"));
 app;
@@ -57,24 +57,21 @@ app.post("/verify", [
   },
 ]);
 
-app.get("/welcome", (req, res, next) => {
-  console.log("response header always", req.headers);
-
-  // res.setHeader("set-cookie", "loginned=true");
-  res.send("shown on github actions again? and pretty");
+app.get("/healthCheck", (req, res, next) => {
+  res.send("okay");
 });
 
-app.post(
-  "/throw",
-  (req, res, next) => {
-    if (req.query.name === "user") throw new CustomError("not found", 404); //new CustomError("test it", 404);
-    if (req.query.name === "ali") return next();
-    res.send({ message: "not throw" });
-  },
-  (req, res) => {
-    res.send({ message: "good" });
-  }
-);
+// app.post(
+//   "/throw",
+//   (req, res, next) => {
+//     if (req.query.name === "user") throw new CustomError("not found", 404); //new CustomError("test it", 404);
+//     if (req.query.name === "ali") return next();
+//     res.send({ message: "not throw" });
+//   },
+//   (req, res) => {
+//     res.send({ message: "good" });
+//   }
+// );
 
 app.use((req, res) => {
   throw new CustomError("Not Found", httpStatusCode.NOT_FOUND);
@@ -94,7 +91,6 @@ process.on("uncaughtException", (error) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error("error middleware", err.message);
   res
     .status(err.statusCode || httpStatusCode.INTERNAL_SERVER_ERROR)
     .send({ error: err.message });
