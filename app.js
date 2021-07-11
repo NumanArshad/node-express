@@ -77,6 +77,7 @@ app.use((req, res) => {
   throw new CustomError("Not Found", httpStatusCode.NOT_FOUND);
 });
 
+console.log("good for project github board");
 // process.on("unhandledRejection", (error) => {
 //   console.log("unhandle rejection", error.name);
 //   throw error;
