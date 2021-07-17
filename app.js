@@ -13,11 +13,20 @@ app.use(express.json());
 // console.log({ argv }, argv.output);
 
 // app.use(express.static(path.join(__dirname, "")))
+const passport = require("passport");
+const {
+  localLoginStrategy,
+  jwtAuthenticationStrategy,
+  passportJwtVerify,
+} = require("./middleware/auth");
 
+app.use(passport.initialize());
+
+passport.use(localLoginStrategy);
+passport.use(jwtAuthenticationStrategy);
 app.set("view engine", "ejs");
 //app.set("views", "./pages");
 require("./db");
-const { verifyToken } = require("./middleware/auth");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
 const sendEmail = require("./utils/emails");
@@ -33,7 +42,7 @@ app.use("/auth", require("./routes/auth"));
 app.use("/users", usersRoutes);
 
 //const coursesRoute = require("./routes/courses")(app);
-app.use("/courses", require("./routes/courses"));
+app.use("/courses", passportJwtVerify, require("./routes/courses"));
 app.use("/teacher_courses", require("./routes/teacher_courses"));
 app.use("/", require("./routes/fileHandling"));
 app;
@@ -79,19 +88,23 @@ app.use((req, res) => {
 
 console.log("good for project github board");
 // process.on("unhandledRejection", (error) => {
-//   console.log("unhandle rejection", error.name);
+//   console.log("unhandle rejection", error);
 //   throw error;
 // });
 
 process.on("uncaughtException", (error) => {
-  console.error(new Date().toUTCString() + " uncaughtException:", err.message);
-  console.error(err.stack);
-  // if (isOperationalError(error)) {
+  // console.error(new Date().toUTCString() + " uncaughtException:", err.message);
+  console.error("uncaught exception", {
+    message: error.message,
+    stack: error.stack,
+  });
+  //if (isOperationalError(error)) {
   process.exit(1);
   // }
 });
 
 app.use((err, req, res, next) => {
+  console.log("error middleware", err);
   res
     .status(err.statusCode || httpStatusCode.INTERNAL_SERVER_ERROR)
     .send({ error: err.message });

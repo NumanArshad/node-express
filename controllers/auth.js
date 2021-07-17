@@ -1,5 +1,6 @@
 const brcypt = require("bcrypt");
 const crypto = require("crypto");
+const passport = require("passport");
 const {
   UNAUTHORIZE,
   NOT_FOUND,
@@ -201,10 +202,19 @@ const resetForgotPassword = async (req, res, next) => {
   }
 };
 
+const passportLocalLogin = (req, res, next) => {
+  passport.authenticate("local", { session: false }, (error, user, message) => {
+    if (!user) return res.status(UNAUTHORIZE).send({ error: message }); //throw new CustomError("invalid is here", UNAUTHORIZE);
+    const token = generateToken(user);
+    res.send({ token });
+  })(req, res, next);
+};
+
 module.exports = {
   login,
   register,
   verifyUserSignup,
   requestForgotPassword,
   resetForgotPassword,
+  passportLocalLogin,
 };
