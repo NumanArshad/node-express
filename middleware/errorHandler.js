@@ -2,7 +2,7 @@ class CustomError extends Error {
   constructor(message, statusCode) {
     super(message);
     this.message = message;
-    console.log({ message });
+    console.log({ message, statusCode });
     this.statusCode = statusCode;
   }
 }

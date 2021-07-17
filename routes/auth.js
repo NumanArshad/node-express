@@ -4,6 +4,7 @@ const {
   verifyUserSignup,
   requestForgotPassword,
   resetForgotPassword,
+  passportLocalLogin,
 } = require("../controllers/auth");
 const { getValidUser } = require("../middleware/auth");
 const {
@@ -14,6 +15,11 @@ const {
 } = require("../middleware/validations/auth");
 
 const route = require("express").Router();
+route.post(
+  "/sign_in",
+  [validateLoginRequest, getValidUser],
+  passportLocalLogin
+);
 
 route.post("/login", [validateLoginRequest, getValidUser], login);
 route.post("/register", validateRegisterRequest, register);
