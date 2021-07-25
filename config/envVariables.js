@@ -30,4 +30,7 @@ module.exports = {
 
   SENDER_EMAIL: process.env.SENDER_EMAIL,
   SENDER_PASSWORD: process.env.SENDER_PASSWORD,
+
+  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
 };

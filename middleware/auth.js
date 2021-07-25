@@ -15,6 +15,8 @@ const { getUserByIdorEmail } = require("../controllers/users");
 const { CustomError, CustomPropertyError } = require("./errorHandler");
 const { JWT_SECRET } = require("../config/envVariables");
 const passport = require("passport");
+const { default: axios } = require("axios");
+const httpStatusCode = require("../config/httpStatusCode");
 
 const generateToken = (user) =>
   jwt.sign({ user }, envVariables.JWT_SECRET, { expiresIn: "2h" });
@@ -103,6 +105,41 @@ const passportJwtVerify = (req, res, next) => {
   })(req, res, next);
 };
 
+const renderLoginGithubPage = (req, res) => {
+  res.render("githubLogin", { clientId: envVariables.GITHUB_CLIENT_ID });
+};
+
+const githubAuthRedirect = (req, res) => {
+  // The req.query object has the query params that
+  // were sent to this route. We want the `code` param
+
+  const requestToken = req.query.code;
+  console.log({ requestToken });
+  const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = envVariables;
+  axios({
+    // make a POST request
+    method: "post",
+    // to the Github authentication API, with the client ID, client secret
+    // and request token
+    url: `https://github.com/login/oauth/access_token?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}&code=${requestToken}`,
+    // Set the content type header, so that we get the response in JSOn
+    headers: {
+      accept: "application/json",
+    },
+  }).then((response) => {
+    // Once we get the response, extract the access token from
+    // the response body
+    console.log({ response });
+    const accessToken = response.data.access_token;
+    // redirect the user to the welcome page, along with the access token
+    if (response.data.error) {
+      res.status(httpStatusCode.BAD_REQUEST).send(response.data);
+      return;
+    }
+    res.send({ accessToken });
+  });
+};
+
 module.exports = {
   generateToken,
   verifyToken,
@@ -110,4 +147,6 @@ module.exports = {
   localLoginStrategy,
   jwtAuthenticationStrategy,
   passportJwtVerify,
+  renderLoginGithubPage,
+  githubAuthRedirect,
 };
