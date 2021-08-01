@@ -17,6 +17,7 @@ const passport = require("passport");
 const {
   localLoginStrategy,
   jwtAuthenticationStrategy,
+  googleAuthStrategy,
   passportJwtVerify,
 } = require("./middleware/auth");
 
@@ -24,6 +25,7 @@ app.use(passport.initialize());
 
 passport.use(localLoginStrategy);
 passport.use(jwtAuthenticationStrategy);
+passport.use(googleAuthStrategy);
 app.set("view engine", "ejs");
 //app.set("views", "./pages");
 require("./db");

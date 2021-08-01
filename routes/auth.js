@@ -1,3 +1,4 @@
+const passport = require("passport");
 const {
   login,
   register,
@@ -6,7 +7,12 @@ const {
   resetForgotPassword,
   passportLocalLogin,
 } = require("../controllers/auth");
-const { getValidUser } = require("../middleware/auth");
+const {
+  getValidUser,
+  renderLoginGithubPage,
+  githubAuthRedirect,
+  googleAuthCallback,
+} = require("../middleware/auth");
 const {
   validateLoginRequest,
   validateRegisterRequest,
@@ -23,6 +29,18 @@ route.post(
 
 route.post("/login", [validateLoginRequest, getValidUser], login);
 route.post("/register", validateRegisterRequest, register);
+route.get("/github_login", renderLoginGithubPage);
+route.get("/oauth/redirect", githubAuthRedirect);
+//oauth/google/redirect
+route.get(
+  "/google_login",
+  passport.authenticate("google", {
+    prompt: "consent", //always open popup
+    scope: ["https://www.googleapis.com/auth/plus.login"],
+  })
+);
+route.get("/oauth/google/redirect", googleAuthCallback);
+
 route.post(
   "/activate-account",
   [validateResetPassword, getValidUser],
