@@ -4,6 +4,7 @@ const localStrategy = require("passport-local").Strategy;
 const passportJWT = require("passport-jwt");
 const JWTStrategy = passportJWT.Strategy;
 const ExtracjJWT = passportJWT.ExtractJwt;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const envVariables = require("../config/envVariables");
 const {
   UNAUTHORIZE,
@@ -17,6 +18,7 @@ const { JWT_SECRET } = require("../config/envVariables");
 const passport = require("passport");
 const { default: axios } = require("axios");
 const httpStatusCode = require("../config/httpStatusCode");
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = envVariables;
 
 const generateToken = (user) =>
   jwt.sign({ user }, envVariables.JWT_SECRET, { expiresIn: "2h" });
@@ -129,7 +131,6 @@ const githubAuthRedirect = (req, res) => {
   }).then((response) => {
     // Once we get the response, extract the access token from
     // the response body
-    console.log({ response });
     const accessToken = response.data.access_token;
     // redirect the user to the welcome page, along with the access token
     if (response.data.error) {
@@ -140,6 +141,26 @@ const githubAuthRedirect = (req, res) => {
   });
 };
 
+const googleAuthStrategy = new GoogleStrategy(
+  {
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:4000/auth/oauth/google/redirect",
+  },
+  (accessToken, refreshToken, profile, done) => {
+    console.log({ accessToken, refreshToken, profile });
+    return done(null, profile);
+  }
+);
+
+const googleAuthCallback = (req, res, next) =>
+  passport.authenticate("google", (error, user, message) => {
+    // if (!user) return res.status(UNAUTHORIZE).send({ error: message }); //throw new CustomError("invalid is here", UNAUTHORIZE);
+    // const token = generateToken(user);
+    console.log({ error, user, message });
+    res.send({ data: user?._json });
+  })(req, res, next);
+
 module.exports = {
   generateToken,
   verifyToken,
@@ -149,4 +170,6 @@ module.exports = {
   passportJwtVerify,
   renderLoginGithubPage,
   githubAuthRedirect,
+  googleAuthStrategy,
+  googleAuthCallback,
 };
