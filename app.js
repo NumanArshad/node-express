@@ -27,7 +27,6 @@ passport.use(localLoginStrategy);
 passport.use(jwtAuthenticationStrategy);
 passport.use(googleAuthStrategy);
 app.set("view engine", "ejs");
-//app.set("views", "./pages");
 require("./db");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
