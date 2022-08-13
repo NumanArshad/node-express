@@ -8,7 +8,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json());
 
-// const argv = require("yargs").argv;
+//  app.use(express.static(path.join(__dirname, "")))
 
 // console.log({ argv }, argv.output);
 
