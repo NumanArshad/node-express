@@ -1,37 +1,34 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+const multer = require("multer");
 require("dotenv").config();
 app.use(express.urlencoded({ extended: false }));
+//app.use(multer({ dest: "repos" }).single("image"));
+
 app.use(express.json());
+
 // const argv = require("yargs").argv;
 
 // console.log({ argv }, argv.output);
 
 // app.use(express.static(path.join(__dirname, "")))
 
-// app.set("view engine", "ejs");
-// app.set("views", "./pages");
-const db = require("./db");
-const { verifyToken } = require("./middleware/jwtUtils");
+app.set("view engine", "ejs");
+//app.set("views", "./pages");
+require("./db");
+const { verifyToken } = require("./middleware/auth");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
+const sendEmail = require("./utils/emails");
 app.use("/auth", require("./routes/auth"));
 
-app.use("/users", verifyToken, usersRoutes);
+app.use("/users", usersRoutes);
 
-// handler for the /user/:id path, which sends a special response
-// app.get("/user/:id", function (req, res, next) {
-//   res.send("special");
-// });
-
-// const db = query
-
-// app.get("/dt", (req, res, next) => {
-//   const err = new Error("custom error");
-//   //  console.log("error is", err.message, err.stack);
-//   next(err);
-// });
+//const coursesRoute = require("./routes/courses")(app);
+app.use("/courses", require("./routes/courses"));
+app.use("/teacher_courses", require("./routes/teacher_courses"));
+app.use("/", require("./routes/fileHandling"));
 
 app.post("/verify", [
   body("email")
@@ -53,17 +50,46 @@ app.post("/verify", [
   },
 ]);
 
-app.use((err, req, res, next) => {
-  // res.status(500);
-  console.error("error middleware", err);
-  res.status(400).send({ message: err });
+app.get("/send", async (req, res, next) => {
+  try {
+    const sendInfo = await sendEmail(
+      "signup",
+      { email: "test123@mailinator.com", token: "123", id: 23 },
+      next
+    );
+
+    console.log({ sendInfo });
+    res.send({ send_success: `email send successfully to test123@gmail.com` });
+  } catch (error) {
+    next(error.message);
+  }
 });
 
-// app.get("/", (req, res, next) => {
-//   console.log("response header always", req.headers);
-//   // res.setHeader("set-cookie", "loginned=true");
-//   res.send("always");
-// });
+app.post(
+  "/tst",
+  (req, res, next) => {
+    req.token = "token";
+    req.locale = "local here boy";
+
+    next();
+  },
+  (req, res, next) => {
+    res.send({ token: req.token, locale: req.locale });
+  }
+);
+
+app.get("/welcome", (req, res, next) => {
+  console.log("response header always", req.headers);
+  // res.setHeader("set-cookie", "loginned=true");
+  res.send("shown on github actions again? and pretty");
+});
+
+app.use((err, req, res, next) => {
+  //res.status(500);
+  console.error("error middleware", err);
+  const statusCode = err.includes("duplicate") ? 422 : 400;
+  res.status(statusCode).send({ message: err });
+});
 
 // app.use((req, res) => {
 //   // res.status(404).sendFile(path.join(__dirname, "views", "404.html"));

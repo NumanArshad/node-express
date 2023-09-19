@@ -11,12 +11,13 @@ const pool = new pg.Pool(
   { connectionString: process.env.DATABASE_URL }
 );
 
+console.log(process.env.DATABASE_URL);
+
 pool.connect((error, client) => {
   if (error) {
     console.log("db connection failure", error.message);
     // throw error;
     process.exit();
-    return;
   }
   console.log("database connection established successfully!");
 });
