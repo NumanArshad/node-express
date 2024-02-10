@@ -42,7 +42,7 @@ app.use("/auth", require("./routes/auth"));
 
 app.use("/users", usersRoutes);
 
-//const coursesRoute = require("./routes/courses")(app);
+const coursesRoute = require("./routes/courses")(app);
 app.use("/courses", passportJwtVerify, require("./routes/courses"));
 app.use("/teacher_courses", require("./routes/teacher_courses"));
 app.use("/", require("./routes/fileHandling"));
