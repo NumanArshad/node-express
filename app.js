@@ -31,7 +31,7 @@ require("./db");
 const usersRoutes = require("./routes/users");
 const { body, validationResult } = require("express-validator");
 const sendEmail = require("./utils/emails");
-const { validateLoginRequest } = require("./middleware/validations/auth");
+// const { validateLoginRequest } = require("./middleware/validations/auth");
 const {
   CustomError,
   isOperationalError,
