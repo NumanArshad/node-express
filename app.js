@@ -46,7 +46,7 @@ const coursesRoute = require("./routes/courses")(app);
 app.use("/courses", passportJwtVerify, require("./routes/courses"));
 app.use("/teacher_courses", require("./routes/teacher_courses"));
 app.use("/", require("./routes/fileHandling"));
-app;
+app.get();
 app.post("/verify", [
   body("email")
     .notEmpty()
